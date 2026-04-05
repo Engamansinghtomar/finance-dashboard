@@ -3,8 +3,9 @@ import react from "@vitejs/plugin-react";
 import path from "node:path";
 import { createServer } from "./server";
 
-// https://vitejs.dev/config/
+// GitHub Pages ya static deploy compatible config
 export default defineConfig(({ mode }) => ({
+  base: "/",
   server: {
     host: "::",
     port: 8080,
