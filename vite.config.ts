@@ -3,8 +3,9 @@ import react from "@vitejs/plugin-react";
 import path from "node:path";
 import { createServer } from "./server";
 
-// https://vitejs.dev/config/
+// GitHub Pages ya static deploy compatible config
 export default defineConfig(({ mode }) => ({
+  base: mode === "production" ? "/finance-dashboard/" : "/", 
   server: {
     host: "::",
     port: 8080,
@@ -28,11 +29,11 @@ export default defineConfig(({ mode }) => ({
 function expressPlugin(): Plugin {
   return {
     name: "express-plugin",
-    apply: "serve", // Only apply during development (serve mode)
+    apply: "serve", 
     configureServer(server) {
       const app = createServer();
 
-      // Add Express app as middleware to Vite dev server
+    
       server.middlewares.use(app);
     },
   };
