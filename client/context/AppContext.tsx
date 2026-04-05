@@ -1,11 +1,7 @@
 import { createContext, useContext, useState, ReactNode, useEffect } from "react";
+import { Transaction } from '@/lib/mock-data';
 
-type Transaction = {
-  id: number;
-  title: string;
-  amount: number;
-  type: "income" | "expense";
-};
+
 
 type AppContextType = {
   transactions: Transaction[];
@@ -14,6 +10,8 @@ type AppContextType = {
   setRole: React.Dispatch<React.SetStateAction<string>>;
   filters: any;
   setFilters: React.Dispatch<React.SetStateAction<any>>;
+  darkMode: boolean;
+setDarkMode: React.Dispatch<React.SetStateAction<boolean>>;
 };
 
 const AppContext = createContext<AppContextType | null>(null);

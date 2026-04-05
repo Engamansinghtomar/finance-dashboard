@@ -7,6 +7,7 @@ export interface Transaction {
   amount: number;
   category: string;
   type: TransactionType;
+  title: string;
   description: string;
 }
 
@@ -26,6 +27,7 @@ const now = new Date();
 const transactions: Transaction[] = [
   {
     id: '1',
+    title: 'Salary',
     date: new Date(now.getFullYear(), now.getMonth(), 15),
     amount: 5000,
     category: 'Salary',
@@ -34,6 +36,7 @@ const transactions: Transaction[] = [
   },
   {
     id: '2',
+    title: 'House Rent',
     date: new Date(now.getFullYear(), now.getMonth(), 14),
     amount: 1200,
     category: 'Rent',
@@ -42,6 +45,7 @@ const transactions: Transaction[] = [
   },
   {
     id: '3',
+    title: 'Grocery Shopping',
     date: new Date(now.getFullYear(), now.getMonth(), 13),
     amount: 250,
     category: 'Groceries',
@@ -50,6 +54,7 @@ const transactions: Transaction[] = [
   },
   {
     id: '4',
+    title: 'Electric Bill',
     date: new Date(now.getFullYear(), now.getMonth(), 12),
     amount: 150,
     category: 'Utilities',
@@ -58,6 +63,7 @@ const transactions: Transaction[] = [
   },
   {
     id: '5',
+    title: 'Movie Night',
     date: new Date(now.getFullYear(), now.getMonth(), 11),
     amount: 300,
     category: 'Entertainment',
@@ -66,6 +72,7 @@ const transactions: Transaction[] = [
   },
   {
     id: '6',
+    title: 'Travel',
     date: new Date(now.getFullYear(), now.getMonth(), 10),
     amount: 100,
     category: 'Transportation',
@@ -74,6 +81,7 @@ const transactions: Transaction[] = [
   },
   {
     id: '7',
+    title: 'Vegetables',
     date: new Date(now.getFullYear(), now.getMonth(), 9),
     amount: 80,
     category: 'Groceries',
@@ -82,6 +90,7 @@ const transactions: Transaction[] = [
   },
   {
     id: '8',
+    title: 'Freelance Work',
     date: new Date(now.getFullYear(), now.getMonth(), 8),
     amount: 1500,
     category: 'Freelance',
@@ -90,6 +99,7 @@ const transactions: Transaction[] = [
   },
   {
     id: '9',
+    title: 'Internet Bill',
     date: new Date(now.getFullYear(), now.getMonth(), 7),
     amount: 75,
     category: 'Utilities',
@@ -98,6 +108,7 @@ const transactions: Transaction[] = [
   },
   {
     id: '10',
+    title: 'Concert',
     date: new Date(now.getFullYear(), now.getMonth(), 6),
     amount: 200,
     category: 'Entertainment',
@@ -106,6 +117,7 @@ const transactions: Transaction[] = [
   },
   {
     id: '11',
+    title: 'Doctor Visit',
     date: new Date(now.getFullYear(), now.getMonth(), 5),
     amount: 450,
     category: 'Healthcare',
@@ -114,6 +126,7 @@ const transactions: Transaction[] = [
   },
   {
     id: '12',
+    title: 'Bonus',
     date: new Date(now.getFullYear(), now.getMonth(), 4),
     amount: 2000,
     category: 'Bonus',
@@ -168,7 +181,7 @@ export const getSpendingByCategory = (): CategoryBreakdown[] => {
         if (existing) {
           existing.value += t.amount;
         } else {
-          acc.push({ name: t.category, value: t.amount, percentage: 0 });
+          acc.push({ name: t.category, value: t.amount });
         }
         return acc;
       },
@@ -193,6 +206,10 @@ export const getInsights = () => {
   return {
     highestSpendingCategory: spending[0],
     monthlyAverageExpense: monthlyAverage,
-    savingsRate: Math.round((summary.totalIncome - summary.totalExpenses) / summary.totalIncome * 100),
+    savingsRate: Math.round(
+      ((summary.totalIncome - summary.totalExpenses) /
+        summary.totalIncome) *
+        100
+    ),
   };
 };

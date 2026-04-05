@@ -8,14 +8,14 @@ import { staggerContainer, staggerItem } from '@/lib/animations';
 interface TransactionsListProps {
   transactions: Transaction[];
   canEdit?: boolean;
-  onEdit?: (transaction: Transaction) => void; // ✅ FIX
+  onEdit?: (transaction: Transaction) => void; 
   onDelete?: (id: string) => void;
 }
 
 export const TransactionsList = ({
   transactions,
   canEdit = false,
-  onEdit, // ✅ FIX (IMPORTANT)
+  onEdit, 
   onDelete,
 }: TransactionsListProps) => {
 
@@ -155,7 +155,7 @@ export const TransactionsList = ({
                   {transaction.amount}
                 </p>
 
-                {/* ✅ EDIT + DELETE */}
+                {/*EDIT + DELETE */}
                 {canEdit && (
                   <div className="flex gap-3">
                     <button

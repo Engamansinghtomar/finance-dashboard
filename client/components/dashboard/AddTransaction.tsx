@@ -8,7 +8,7 @@ const AddTransactionForm = ({ onAdd, editData }: any) => {
     category: "",
   });
 
-  // ✅ PREFILL (EDIT MODE)
+  //PREFILL (EDIT MODE)
   useEffect(() => {
     if (editData) {
       setFormData({
@@ -34,7 +34,7 @@ const AddTransactionForm = ({ onAdd, editData }: any) => {
 
     onAdd(formData);
 
-    // ✅ reset only when adding (not editing)
+    // reset only when adding (not editing)
     if (!editData) {
       setFormData({
         title: "",
@@ -85,7 +85,7 @@ const AddTransactionForm = ({ onAdd, editData }: any) => {
         className="w-full border p-2 rounded"
       />
 
-      {/* ✅ BUTTON AUTO CHANGE */}
+      {/* BUTTON AUTO CHANGE */}
       <button
         type="submit"
         className="bg-primary text-white px-4 py-2 rounded w-full"

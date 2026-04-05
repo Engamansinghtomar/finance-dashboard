@@ -8,7 +8,6 @@ import {
   getSpendingByCategory,
   getInsights,
   mockTransactions,
-  UserRole,
   Transaction,
 } from '@/lib/mock-data';
 import { staggerContainer, staggerItem } from '@/lib/animations';
@@ -21,23 +20,35 @@ import AddTransaction from './AddTransaction';
 
 export const Dashboard = () => {
 
-  // ✅ GLOBAL STATE (Context)
-  const { transactions, setTransactions, role, setRole, darkMode, setDarkMode, filters, setFilters } = useAppContext();
+  const {
+    transactions,
+    setTransactions,
+    role,
+    setRole,
+    darkMode,
+    setDarkMode,
+    filters,
+    setFilters
+  } = useAppContext();
 
-  // ✅ LOCAL UI STATE (same as before)
+  // LOCAL UI STATE
   const [showSettings, setShowSettings] = useState(false);
   const [showForm, setShowForm] = useState(false);
   const [editData, setEditData] = useState<Transaction | null>(null);
 
-  // ✅ fallback if empty (IMPORTANT - tera feature safe)
-  const baseTransactions = transactions.length ? transactions : mockTransactions;
+  // 🔐 PASSWORD STATES
+  const [showPasswordPrompt, setShowPasswordPrompt] = useState(false);
+  const [password, setPassword] = useState('');
 
-const finalTransactions = baseTransactions.filter((t) => {
-  // type filter
-  if (filters?.type && t.type !== filters.type) return false;
+  const baseTransactions =
+    transactions.length > 0 ? transactions : mockTransactions;
 
-  return true;
-});
+  const finalTransactions: Transaction[] = baseTransactions.filter((t) => {
+    if (filters && typeof filters === "object" && 'type' in filters) {
+      if (filters.type && t.type !== filters.type) return false;
+    }
+    return true;
+  });
 
   const summary = getFinancialSummary();
   const balanceTrend = getBalanceTrend();
@@ -46,7 +57,19 @@ const finalTransactions = baseTransactions.filter((t) => {
 
   const isAdmin = role === 'admin';
 
-  // ✅ ADD / UPDATE
+  // ADMIN PASSWORD CHECK
+  const handleAdminAccess = () => {
+    if (password === 'admin123') {
+      setRole('admin');
+      setShowPasswordPrompt(false);
+      setPassword('');
+    } else {
+      alert('Wrong password');
+      setPassword('');
+    }
+  };
+
+  // ADD / UPDATE
   const handleSaveTransaction = (data: any) => {
     if (editData) {
       setTransactions((prev) =>
@@ -70,12 +93,10 @@ const finalTransactions = baseTransactions.filter((t) => {
     setEditData(null);
   };
 
-  // DELETE
   const handleDeleteTransaction = (id: string) => {
     setTransactions((prev) => prev.filter((t) => t.id !== id));
   };
 
-  // EDIT CLICK
   const handleEdit = (t: Transaction) => {
     setEditData(t);
     setShowForm(true);
@@ -83,7 +104,7 @@ const finalTransactions = baseTransactions.filter((t) => {
 
   return (
     <div className="min-h-screen bg-background">
-      
+
       {/* HEADER */}
       <header className="border-b border-border bg-card shadow-sm">
         <div className="mx-auto max-w-7xl px-4 py-4 flex justify-between items-center">
@@ -97,7 +118,7 @@ const finalTransactions = baseTransactions.filter((t) => {
           </div>
 
           <div className="flex items-center gap-4">
-            
+
             {/* ROLE SWITCH */}
             <div className="flex items-center gap-2 rounded-lg border border-border bg-muted p-1">
               <button
@@ -111,7 +132,7 @@ const finalTransactions = baseTransactions.filter((t) => {
                 Viewer
               </button>
               <button
-                onClick={() => setRole('admin')}
+                onClick={() => setShowPasswordPrompt(true)}
                 className={`rounded px-3 py-1.5 text-sm font-medium ${
                   role === 'admin'
                     ? 'bg-primary text-primary-foreground'
@@ -122,25 +143,27 @@ const finalTransactions = baseTransactions.filter((t) => {
               </button>
             </div>
 
+            {/* SETTINGS */}
             <div className="relative">
-  <button
-    onClick={() => setShowSettings(!showSettings)}
-    className="p-2 border rounded-lg hover:bg-muted"
-  >
-    <Settings className="h-5 w-5 text-muted-foreground" />
-  </button>
+              <button
+                onClick={() => setShowSettings(!showSettings)}
+                className="p-2 border rounded-lg hover:bg-muted"
+              >
+                <Settings className="h-5 w-5 text-muted-foreground" />
+              </button>
 
-  {showSettings && (
-    <div className="absolute right-0 mt-2 w-40 bg-card border rounded-lg shadow-md p-2">
-      <button
-        onClick={() => setDarkMode(!darkMode)}
-        className="w-full text-left px-3 py-2 text-sm hover:bg-muted rounded"
-      >
-        {darkMode ? "☀️ Light Mode" : "🌙 Dark Mode"}
-      </button>
-    </div>
-  )}
-</div>
+              {showSettings && (
+                <div className="absolute right-0 mt-2 w-40 bg-card border rounded-lg shadow-md p-2">
+                  <button
+                    onClick={() => setDarkMode(!darkMode)}
+                    className="w-full text-left px-3 py-2 text-sm hover:bg-muted rounded"
+                  >
+                    {darkMode ? "Light Mode" : "Dark Mode"}
+                  </button>
+                </div>
+              )}
+            </div>
+
             <button className="p-2 border rounded-lg hover:bg-muted">
               <LogOut className="h-5 w-5 text-muted-foreground" />
             </button>
@@ -191,42 +214,21 @@ const finalTransactions = baseTransactions.filter((t) => {
           initial="initial"
           animate="animate"
         >
-          {/* TRANSACTIONS */}
           <motion.div className="lg:col-span-2" variants={staggerItem}>
-          <div className="mb-4 flex gap-2">
-  <button
-    onClick={() => setFilters({})}
-    className={`px-4 py-2 border rounded-full ${
-      !filters?.type
-        ? "bg-primary text-primary-foreground"
-        : "hover:bg-muted"
-    }`}
-  >
-    All
-  </button>
 
-  <button
-    onClick={() => setFilters({ type: 'income' })}
-    className={`px-4 py-2 border rounded-full ${
-      filters?.type === 'income'
-        ? "bg-primary text-primary-foreground"
-        : "hover:bg-muted"
-    }`}
-  >
-    Income
-  </button>
+            {/* FILTER */}
+            <div className="mb-4 flex gap-2">
+              <button onClick={() => setFilters({})} className={`px-4 py-2 border rounded-full ${!filters?.type ? "bg-primary text-primary-foreground" : "hover:bg-muted"}`}>
+                All
+              </button>
+              <button onClick={() => setFilters({ type: 'income' })} className={`px-4 py-2 border rounded-full ${filters?.type === 'income' ? "bg-primary text-primary-foreground" : "hover:bg-muted"}`}>
+                Income
+              </button>
+              <button onClick={() => setFilters({ type: 'expense' })} className={`px-4 py-2 border rounded-full ${filters?.type === 'expense' ? "bg-primary text-primary-foreground" : "hover:bg-muted"}`}>
+                Expense
+              </button>
+            </div>
 
-  <button
-    onClick={() => setFilters({ type: 'expense' })}
-    className={`px-4 py-2 border rounded-full ${
-      filters?.type === 'expense'
-        ? "bg-primary text-primary-foreground"
-        : "hover:bg-muted"
-    }`}
-  >
-    Expense
-  </button>
-</div>
             <TransactionsList
               transactions={finalTransactions}
               canEdit={isAdmin}
@@ -250,15 +252,11 @@ const finalTransactions = baseTransactions.filter((t) => {
 
             {showForm && (
               <div className="mt-4">
-                <AddTransaction
-                  onAdd={handleSaveTransaction}
-                  editData={editData}
-                />
+                <AddTransaction onAdd={handleSaveTransaction} editData={editData} />
               </div>
             )}
           </motion.div>
 
-          {/* INSIGHTS */}
           <motion.div variants={staggerItem}>
             <InsightsSection
               highestSpendingCategory={insights.highestSpendingCategory}
@@ -274,6 +272,57 @@ const finalTransactions = baseTransactions.filter((t) => {
           </div>
         )}
       </main>
+
+      {/* PASSWORD POPUP */}
+      {showPasswordPrompt && (
+  <div className="fixed inset-0 bg-black/40 flex items-center justify-center z-50">
+    
+    <motion.div
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      exit={{ opacity: 0 }}
+      className="absolute inset-0"
+      onClick={() => setShowPasswordPrompt(false)}
+    />
+
+    <motion.div
+      initial={{ opacity: 0, scale: 1.0, y: 50 }}
+      animate={{ opacity: 1, scale: 1, y: 0 }}
+      transition={{ duration: 0.4 }}
+      className="bg-card p-6 rounded-lg shadow-lg w-80 z-10"
+    >
+      <h2 className="text-lg font-semibold mb-3">
+        Enter Admin Password
+      </h2>
+
+      <input
+        type="password"
+        value={password}
+        onChange={(e) => setPassword(e.target.value)}
+        className="w-full border p-2 rounded mb-3"
+        placeholder="Enter password"
+      />
+
+      <div className="flex justify-end gap-2">
+        <button
+          onClick={() => setShowPasswordPrompt(false)}
+          className="px-3 py-1 border rounded"
+        >
+          Cancel
+        </button>
+
+        <button
+          onClick={handleAdminAccess}
+          className="px-3 py-1 bg-primary text-white rounded"
+        >
+          Submit
+        </button>
+      </div>
+    </motion.div>
+
+  </div>
+)}
+
     </div>
   );
 };

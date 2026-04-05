@@ -47,7 +47,7 @@ export const BalanceTrendChart = ({ data }: BalanceTrendChartProps) => {
               style={{ fontSize: '0.875rem' }}
             />
 
-            {/* ✅ FIXED Y-AXIS */}
+            {/*  Y-AXIS */}
             <YAxis
               stroke="hsl(var(--muted-foreground))"
               style={{ fontSize: '0.875rem' }}
@@ -61,7 +61,7 @@ export const BalanceTrendChart = ({ data }: BalanceTrendChartProps) => {
               }
             />
 
-            {/* ✅ FIXED TOOLTIP */}
+            {/* TOOLTIP */}
             <Tooltip
               contentStyle={{
                 backgroundColor: 'hsl(var(--card))',
